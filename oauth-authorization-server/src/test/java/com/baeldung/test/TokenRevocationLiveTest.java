@@ -3,13 +3,16 @@ package com.baeldung.test;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
-import io.restassured.RestAssured;
-import io.restassured.response.Response;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.Test;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+
+import io.restassured.RestAssured;
+import io.restassured.response.Response;
 
 public class TokenRevocationLiveTest {
 
@@ -23,6 +26,19 @@ public class TokenRevocationLiveTest {
         assertThat(resourceServerResponse.getStatusCode(), equalTo(200));
     }
 
+    @Test
+    public void whenObtainingAccessTokenViaRefreshToken_thenCorrect() {
+        final Response authServerResponse = obtainAccessToken("fooClientIdPassword", "john", "123");
+        final String refreshToken = authServerResponse.jsonPath().getString("refresh_token");
+        assertNotNull(refreshToken);
+        
+        final String refreshedAccesToken = obtainRefreshToken("fooClientIdPassword", refreshToken);
+        assertNotNull(refreshedAccesToken);
+        
+        final Response resourceUsingRefreshedAccessToken = RestAssured.given().header(HttpHeaders.AUTHORIZATION, "Bearer " + refreshedAccesToken).get("http://localhost:8082/spring-security-oauth-resource/foos/100");
+        assertThat(resourceUsingRefreshedAccessToken.getStatusCode(), equalTo(HttpStatus.OK));
+    }
+    
     //
 
     private Response obtainAccessToken(String clientId, String username, String password) {
