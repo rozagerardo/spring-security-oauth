@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <title>Baeldung's JS-only SPA Oauth Client</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="resources/css/bael-oauth-pkce-styles.css">
+
+    <!-- Import the React, React-Dom and Babel libraries -->
+    <!-- Note: Here we are using React's unminified-development version -->
+    <script src="https://fb.me/react-0.14.3.js"></script>
+    <script src="https://fb.me/react-dom-0.14.3.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  </head>
+
+  <body>
+    <div id="root"></div>
+    <script type="text/javascript" src="resources/js/common_functions.js"></script>
+    <script type="text/javascript" src="resources/js/code_verifier_functions.js"></script>
+    <script type="text/javascript" src="resources/js/code_challenge_functions.js"></script>
+
+    <script type="text/babel">
+      // Step 0 - Initiate Process
+        const Step0 = ({nextStepFn, nextStepIsDone}) => (
+        <div className="step0 step-container">
+          <h2>JS OAuth Client using PKCE</h2>
+          <div className="summary">Click to start the authentication process, step by step.</div>
+          <div className="action">
+            <button onClick={nextStepFn} disabled={nextStepIsDone}>Start Process!</button>
+          </div>
+        </div>
+      )
+
+      // Step 1 - Create Codes
+      const Step1 = ({ codeVerifier, codeChallenge, nextStepFn, nextStepIsDone}) => (
+        <div className="step1 step-container">
+          <h2>Step 1 - Create the codes</h2>
+          <div className="summary">The client must generate a "Code Verifier" per request:</div>
+          <div className="result"><span>{codeVerifier}</span></div>
+          <div className="summary">Additionally, it should transform the code using a S256 transfromation method. This is called the "Code Challenge":</div>
+          <div className="result"><span>{codeChallenge}</span></div>
+          <div className="action">
+            <button onClick={nextStepFn} disabled={nextStepIsDone}>Request Auth Code!</button>
+          </div>
+        </div>
+      )
+
+      // App component:
+      class App extends React.Component{
+        state = {
+          step1: {
+            done: false,
+            codeVerifier: null,
+            codeChallenge: null
+          },
+          step2: {
+            done: false
+          }
+        };
+
+        executeStep1CreateCodes = () => {
+          const codeVerifier = generate_code_verifier();
+          const codeChallenge = generate_code_challenge(codeVerifier);
+          this.setState({
+            step1: {
+              done: true,
+              codeVerifier,
+              codeChallenge
+            }
+          })
+        }
+
+        executeStep2RequestCode = () => {
+          this.setState({
+            step2: {
+              done: true,
+            }
+          })
+        }
+
+        render(){
+          const {step1, step2} = {...this.state};
+          return (
+            <div className="baeldung-container">
+              <Step0 nextStepIsDone={step1.done} nextStepFn={this.executeStep1CreateCodes} />
+              {step1.done && <Step1 {...step1} nextStepIsDone={step2.done} nextStepFn={this.executeStep2RequestCode}  />}
+            </div>
+          )
+        }
+      }
+
+      // main rendering:
+      const rootElement = document.getElementById('root');
+      ReactDOM.render(<App/>, rootElement);
+    </script>
+
+  </body>
+
+</html>
