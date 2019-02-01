@@ -1,0 +1,116 @@
+*,
+*:before,
+*:after {
+  box-sizing: border-box;
+}
+
+.baeldung-container,
+.popup-container {
+  text-align: center;
+}
+
+.step-container {
+  padding: 0 10%;
+  margin: 0 5%;
+  min-height: 30vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+}
+
+.step-container:nth-child(odd) {
+  background-color: #63b175;
+  color: white;
+}
+
+.step-container button {
+  border-style: solid;
+  font-size: 1.5em;
+  border-radius: 20px;
+  padding: 5px 20px;
+  margin: 20px 0;
+}
+
+.step-container:nth-child(odd) button {
+  background-color: #63b175;
+  border-color: white;
+  color: white;
+}
+
+.step-container:nth-child(odd) button:hover {
+  background-color: white;
+  color: #63b175;
+}
+
+.step-container:nth-child(even) button {
+  background-color: white;
+  border-color: #63b175;
+  color: #63b175;
+}
+
+.step-container:nth-child(even) button:hover {
+  background-color: #63b175;
+  color: white;
+}
+
+.step-container .action button:disabled {
+  background-color: #E0E0E0;
+  color: gray;
+  border-color: gray;
+}
+
+.step-container .result {
+  padding: 20px;
+}
+
+.step-container .result span {
+  border-style: solid;
+  padding: 5px 15px;
+  border-radius: 5px;
+  border-color: black;;
+}
+
+.step-container:nth-child(even) .result span {
+  color: #63b175;
+}
+
+.summary {
+  font-size: 1.23em;
+}
+
+.result {
+  font-size: 1.7em;
+}
+
+h2 {
+  margin: 0.3em;
+}
+
+/* Spinner */
+
+.spinner-container {
+  padding-bottom: 20px;
+}
+
+.spinner-container .spinner-text {
+  font-size: 1.2em;
+}
+
+.spinner-container .spinner-icon {
+  border: 16px solid green;
+  border-top: 16px solid lightgray;
+  border-radius: 50%;
+  width: 120px;
+  height: 120px;
+  animation: spin 2s linear infinite;
+  margin: auto;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
