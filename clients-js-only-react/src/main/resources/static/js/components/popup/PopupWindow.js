@@ -35,8 +35,8 @@ class PopupWindow extends React.Component {
   }
 
   requestAccessTokenFn = () => {
-    const { domain, redirectUri, tokenEndpoint } = CONFIGS.OKTA;
-    const tokenUrl = 'https://' + domain + tokenEndpoint;
+    const { tokenDomain, redirectUri, tokenEndpoint } = CONFIGS.GOOGLE;
+    const tokenUrl = 'https://' + tokenDomain + tokenEndpoint;
     const tokenRequestBody = {
       grant_type: 'authorization_code',
       redirect_uri: redirectUri,

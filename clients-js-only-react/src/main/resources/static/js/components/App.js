@@ -36,11 +36,11 @@ class App extends React.Component{
 
   executeStep2RequestCode = () => {
     if (!this.state.user) {
-      const {domain, clientId, redirectUri, authEndpoint} = CONFIGS.OKTA;
-      const authorizationUrl = 'https://' + domain + authEndpoint 
+      const {authDomain, clientId, redirectUri, authEndpoint, scopes} = CONFIGS.GOOGLE;
+      const authorizationUrl = 'https://' + authDomain + authEndpoint 
       + '?client_id=' + clientId
       + "&response_type=code"
-      + '&scope=openid'
+      + '&scope=' + scopes
       + '&redirect_uri=' + encodeURI(redirectUri)
       + '&state=' + this.state.step1.state
       + '&code_challenge_method=S256'
