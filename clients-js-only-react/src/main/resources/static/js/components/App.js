@@ -1,11 +1,12 @@
 // App component:
-class App extends React.Component{
+class App extends React.Component {
   state = {
     step1: {
       started: false,
       codeVerifier: '',
       codeChallenge: '',
-      state: ''
+      state: '',
+      provider: 'AUTH0'
     },
     step2: {
       started: false,
@@ -14,12 +15,16 @@ class App extends React.Component{
       accessToken: ''
     },
     step3: {
-      started: false
-    },
-    user: null
+      started: false,
+      profile: {}
+    }
   };
 
-  executeStep1CreateCodes = () => {
+  componentDidUpdate() {
+    this.lastElement.scrollIntoView({ block: "end", behavior: "smooth" });
+  }
+
+  executeStep1CreateCodes = (provider) => {
     const state = generate_status();
     const codeVerifier = generate_code_verifier();
     const codeChallenge = generate_code_challenge(codeVerifier);
@@ -29,25 +34,25 @@ class App extends React.Component{
         started: true,
         codeVerifier,
         codeChallenge,
-        state
+        state,
+        provider
       }
     })
   }
 
   executeStep2RequestCode = () => {
-    if (!this.state.user) {
-      const {authDomain, clientId, redirectUri, authEndpoint, scopes} = CONFIGS.GOOGLE;
-      const authorizationUrl = 'https://' + authDomain + authEndpoint 
+    const { authDomain, clientId, redirectUri, authEndpoint, scopes, audience } = CONFIGS[this.state.step1.provider];
+    const authorizationUrl = 'https://' + authDomain + authEndpoint
       + '?client_id=' + clientId
       + "&response_type=code"
       + '&scope=' + scopes
       + '&redirect_uri=' + encodeURI(redirectUri)
       + '&state=' + this.state.step1.state
       + '&code_challenge_method=S256'
-      + '&code_challenge=' + this.state.step1.codeChallenge;
-      window.addEventListener('message', this.onPopupResponseFn, false);
-      var popup = window.open(authorizationUrl, 'external_login_page', 'width=700,height=500,left=200,top=100');
-    }
+      + '&code_challenge=' + this.state.step1.codeChallenge
+      + (audience ? ('&audience=' + audience) : '');
+    window.addEventListener('message', this.onPopupResponseFn, false);
+    var popup = window.open(authorizationUrl, 'external_login_page', 'width=800,height=600,left=200,top=100');
     this.setState({
       step2: {
         ...this.state.step2,
@@ -57,7 +62,39 @@ class App extends React.Component{
     })
   }
 
-  executeStep3RequestCode = () => {
+  extractProfileField = (data, fieldString) => {
+    if (!fieldString) return;
+    var fields = fieldString.split('.');
+    var dataValue = { ...data };
+    for (var field of fields) {
+      dataValue = dataValue[field];
+    }
+    return dataValue;
+  }
+
+  executeStep3RequestResource = () => {
+    const { profileDomain, profileEndpoint, profileFields } = CONFIGS[this.state.step1.provider];
+    const profileInfoUrl = 'https://' + profileDomain + profileEndpoint;
+    const headers = { headers: { Authorization: 'Bearer ' + this.state.step2.accessToken } };
+    var self = this;
+    axios.get(profileInfoUrl, headers).then(function (response) {
+      const name = self.extractProfileField(response.data, profileFields.name);
+      const lastName = self.extractProfileField(response.data, profileFields.lastName);
+      const email = self.extractProfileField(response.data, profileFields.email);
+      const picture = self.extractProfileField(response.data, profileFields.picture);
+      const profile = { name, lastName, email, picture };
+      self.setState({
+        step3: {
+          ...self.state.step3,
+          profile
+        }
+      })
+    })
+      .catch(function (error) {
+        const errorMessage = "Error retrieving user information" + error;
+        window.alert(errorMessage);
+      })
+
     this.setState({
       step3: {
         ...this.state.step3,
@@ -68,14 +105,15 @@ class App extends React.Component{
 
   onPopupResponseFn = (e) => {
     const eventType = e.data && e.data.type;
-    switch(eventType) {
+    switch (eventType) {
       case 'authCode':
         if (e.data.state !== this.state.step1.state) {
           window.alert("Retrieved state [" + e.data.state + "] didn't match stored one! Try again");
           break;
         }
         const popupUpdate = {
-          codeVerifier: this.state.step1.codeVerifier
+          codeVerifier: this.state.step1.codeVerifier,
+          provider: this.state.step1.provider
         }
         this.state.step2.popup.postMessage(popupUpdate, "*");
         this.setState({
@@ -94,24 +132,27 @@ class App extends React.Component{
         });
         break;
       case 'closed':
-      this.setState({
-        step2: {
-          ...this.state.step2,
-          popup: null
-        }
-      });
-      break;
+        this.setState({
+          step2: {
+            ...this.state.step2,
+            popup: null
+          }
+        });
+        break;
     }
-      
+
   }
 
-  render(){
-    const {step1, step2, step3} = {...this.state};
+  render() {
+    const { step1, step2, step3 } = { ...this.state };
     return (
       <div className="baeldung-container">
-        <Step0 nextStepStarted={step1.started} nextStepFn={this.executeStep1CreateCodes} />
-        {step1.started && <Step1 {...step1} nextStepStarted={step2.started} nextStepFn={this.executeStep2RequestCode}  />}
-        {step2.started && <Step2 {...step2} nextStepStarted={step3.started} />}
+        <Step0 providers={Object.keys(CONFIGS)} nextStepStarted={step1.started} nextStepFn={this.executeStep1CreateCodes} />
+        {step1.started && <Step1 {...step1} nextStepStarted={step2.started} nextStepFn={this.executeStep2RequestCode} />}
+        {step2.started && <Step2 {...step2} nextStepStarted={step3.started} nextStepFn={this.executeStep3RequestResource} />}
+        {step3.started && <Step3 {...step3} />}
+        <div ref={(ref) => { this.lastElement = ref; }}>
+        </div>
       </div>
     )
   }

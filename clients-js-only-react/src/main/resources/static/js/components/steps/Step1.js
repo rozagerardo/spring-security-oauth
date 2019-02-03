@@ -1,5 +1,5 @@
 // Step 1 - Create Codes
-const Step1 = ({ codeVerifier, codeChallenge, state, nextStepFn, nextStepStarted}) => (
+const Step1 = ({ codeVerifier, codeChallenge, state, nextStepFn, nextStepStarted }) => (
   <div className="step1 step-container">
     <h2>Step 1 - Create the codes</h2>
     <div className="summary">The client must generate the tipical 'state' value to compare later and avoid CSRF:</div>

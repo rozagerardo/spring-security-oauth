@@ -24,7 +24,9 @@
       const urlParams = new URLSearchParams(window.location.search);
       const popupProps = {
         authCode: urlParams.get('code'),
-        state: urlParams.get('state')
+        state: urlParams.get('state'),
+        error: urlParams.get('error'),
+        errorDescription: urlParams.get('error_description')
       }
 
       // popup rendering:
