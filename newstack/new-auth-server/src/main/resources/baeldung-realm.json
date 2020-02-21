@@ -62,7 +62,7 @@
       "attributes" : { }
     } ],
     "client" : {
-      "lssoClient" : [ ],
+      "newClient" : [ ],
       "realm-management" : [ {
         "id" : "5d00243f-ceec-4b0c-995e-d86d5b8a0ae6",
         "name" : "view-clients",
@@ -426,12 +426,12 @@
     "optionalClientScopes" : [ "address", "phone", "offline_access", "microprofile-jwt" ]
   }, {
     "id" : "b88ce206-63d6-43b6-87c9-ea09d8c02f32",
-    "clientId" : "lssoClient",
+    "clientId" : "newClient",
     "surrogateAuthRequired" : false,
     "enabled" : true,
     "clientAuthenticatorType" : "client-secret",
-    "secret" : "lssoSecret",
-    "redirectUris" : [ "http://localhost:8082/lsso-client/login/oauth2/code/custom" ],
+    "secret" : "newClientSecret",
+    "redirectUris" : [ "http://localhost:8082/new-client/login/oauth2/code/custom" ],
     "webOrigins" : [ ],
     "notBefore" : 0,
     "bearerOnly" : false,
