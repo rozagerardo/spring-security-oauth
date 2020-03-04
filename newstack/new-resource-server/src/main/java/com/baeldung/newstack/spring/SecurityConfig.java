@@ -14,7 +14,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
               .antMatchers(HttpMethod.GET, "/user/info", "/api/projects/**")
                 .hasAuthority("SCOPE_read")
               .antMatchers(HttpMethod.POST, "/api/projects")
-                .hasAuthority("SCOPE_write")
+                .hasAuthority("SUPERUSER")
               .anyRequest()
                 .authenticated()
             .and()
