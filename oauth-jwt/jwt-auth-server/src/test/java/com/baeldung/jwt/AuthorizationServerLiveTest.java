@@ -34,7 +34,7 @@ public class AuthorizationServerLiveTest {
 	}
 
 	private String obtainAccessToken() {
-		final String redirectUrl = "http://localhost:8082/jwt-client/login/oauth2/code/custom";
+		final String redirectUrl = "http://localhost:8084/";
 		final String authorizeUrl = "http://localhost:8083/auth/realms/baeldung/protocol/openid-connect/auth?response_type=code&client_id=jwtClient&scope=read&redirect_uri="
 				+ redirectUrl;
 		final String tokenUrl = "http://localhost:8083/auth/realms/baeldung/protocol/openid-connect/token";
