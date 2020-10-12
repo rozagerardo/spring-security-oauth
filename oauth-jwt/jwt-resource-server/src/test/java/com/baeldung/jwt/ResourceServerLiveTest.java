@@ -46,7 +46,7 @@ public class ResourceServerLiveTest {
 
     @Test
     public void givenUserWithOtherScope_whenGetProjectResource_thenForbidden() {
-        String accessToken = obtainAccessToken("other");
+        String accessToken = obtainAccessToken("email");
         System.out.println("ACCESS TOKEN: " + accessToken);
 
         // Access resources using access token
@@ -68,7 +68,8 @@ public class ResourceServerLiveTest {
             .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
             .get(userInfoResourceUrl);
         System.out.println(response.asString());
-        assertThat(response.as(Map.class)).containsEntry("user_name", "john@test.com");
+        assertThat(response.as(Map.class)).containsEntry("user_name", "john@test.com")
+            .containsEntry("organization", "BAELDUNG");
     }
 
     @Test
