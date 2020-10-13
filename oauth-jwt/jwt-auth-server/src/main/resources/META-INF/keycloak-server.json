@@ -74,8 +74,9 @@
 		"staticMaxAge": "${keycloak.theme.staticMaxAge:2592000}",
 		"cacheTemplates": "${keycloak.theme.cacheTemplates:true}",
 		"cacheThemes": "${keycloak.theme.cacheThemes:true}",
+		"welcomeTheme": "custom",
 		"folder": {
-			"dir": "${keycloak.theme.dir}"
+			"dir": "src/main/resources/themes"
 		}
 	},
 	"login": {
