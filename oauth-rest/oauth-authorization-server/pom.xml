@@ -55,6 +55,16 @@
             <artifactId>keycloak-dependencies-server-all</artifactId>
             <version>${keycloak.version}</version>
             <type>pom</type>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-log4j12</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>log4j</groupId>
+                    <artifactId>log4j</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         
         <!-- config properties processor -->
@@ -107,8 +117,12 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>13</java.version>
 
-        <keycloak.version>10.0.1</keycloak.version>
-        <resteasy.version>3.11.2.Final</resteasy.version>
+        <keycloak.version>11.0.2</keycloak.version>
+
+        <!-- these should be updated together with Keycloak -->
+        <!-- check keycloak-dependencies-server-all effective pom -->
+        <infinispan.version>10.1.8.Final</infinispan.version>
+        <resteasy.version>3.12.1.Final</resteasy.version>
     </properties>
 
 </project>

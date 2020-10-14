@@ -10,7 +10,6 @@ import javax.sql.DataSource;
 
 import org.jboss.resteasy.plugins.server.servlet.HttpServlet30Dispatcher;
 import org.jboss.resteasy.plugins.server.servlet.ResteasyContextParameters;
-import org.keycloak.services.filters.KeycloakSessionServletFilter;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
@@ -40,15 +39,14 @@ public class EmbeddedKeycloakConfig {
 	}
 
 	@Bean
-	FilterRegistrationBean<KeycloakSessionServletFilter> keycloakSessionManagement(
-			KeycloakServerProperties keycloakServerProperties) {
+	FilterRegistrationBean<EmbeddedKeycloakRequestFilter> keycloakSessionManagement(KeycloakServerProperties keycloakServerProperties) {
 
-		FilterRegistrationBean<KeycloakSessionServletFilter> filter = new FilterRegistrationBean<>();
-		filter.setName("Keycloak Session Management");
-		filter.setFilter(new KeycloakSessionServletFilter());
-		filter.addUrlPatterns(keycloakServerProperties.getContextPath() + "/*");
+	    FilterRegistrationBean<EmbeddedKeycloakRequestFilter> filter = new FilterRegistrationBean<>();
+	    filter.setName("Keycloak Session Management");
+	    filter.setFilter(new EmbeddedKeycloakRequestFilter());
+	    filter.addUrlPatterns(keycloakServerProperties.getContextPath() + "/*");
 
-		return filter;
+	    return filter;
 	}
 
 	private void mockJndiEnvironment(DataSource dataSource) throws NamingException {
